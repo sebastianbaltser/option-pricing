@@ -2,20 +2,9 @@
 """
 import numpy as np
 
+
 class JumpDiffusion:
     def __init__(self, initial_price, riskfree_rate, volatility, jump_intensity, jump_size_mean, jump_size_variance):
-        """
-        Merton's jump-diffusion process.
-
-        Args:
-            initial_price (float):
-            riskfree_rate (float):
-            volatility (float):
-            jump_intensity (float): Jump intensity, lambda, of the Poisson process N under Q
-            jump_size_mean (float): Mean of the jump sizes, k
-            jump_size_variance (float): Variance of the jump sizes, delta^2
-
-        """
         self.S0 = initial_price
         self.mu = riskfree_rate
         self.sigma = volatility
@@ -24,16 +13,6 @@ class JumpDiffusion:
         self.delta = jump_size_variance
 
     def simulate_states(self, timeline, n):
-        """
-        Simulate `n` paths in the specified timeline.
-
-        Args:
-            timeline (numpy.array): Points in time to simulate states for, excluding time-0.
-            n (int): Number of paths to generate
-
-        Returns:
-            (numpy.array): 2-dimensional array of simulated states
-        """
         timeline = np.concatenate(([0], timeline))
         # Timedifference in the timeline is called dt
         dt = np.diff(timeline)
@@ -72,32 +51,12 @@ class JumpDiffusion:
 
 class BrownianMotion:
     def __init__(self, initial_price, riskfree_rate, volatility, dividend_yield=0):
-        """
-        Simple brownian motion with drift.
-
-        Args:
-            initial_price (float):
-            riskfree_rate (float):
-            dividend_yield (float):
-            volatility (float):
-
-        """
         self.S0 = initial_price
         self.mu = riskfree_rate
         self.sigma = volatility
         self.a = dividend_yield
 
     def simulate_states(self, timeline, n):
-        """
-        Simulate `n` paths in the specified timeline.
-
-        Args:
-            timeline (numpy.array): Points in time to simulate states for, excluding time-0.
-            n (int): Number of paths to generate
-
-        Returns:
-            (numpy.array): 2-dimensional array of simulated states
-        """
         timeline = np.concatenate(([0], timeline))
         # Timedifference in the timeline is called dt
         dt = np.diff(timeline)
