@@ -2,10 +2,7 @@ import numpy as np
 import scipy.stats
 
 
-class Barrier():
-    """
-    Base-class for continuous barrier options
-    """
+class Barrier:
     def __init__(self, strike, barrier, timeline, expiration, underlying, **kwargs):
         self.K = strike
         self.T = expiration
@@ -13,7 +10,7 @@ class Barrier():
         self.B = barrier
         self.underlying = underlying
 
-        self.k = kwargs.get("k", 10) #Precision of the logistic function
+        self.k = kwargs.get("k", 10)
 
     def __repr__(self):
         return f"{self.__class__.__name__}(K = {self.K}, T = {self.T}, B = {self.B})"
@@ -23,11 +20,7 @@ class Barrier():
 
 
 class BarrierDiscreteDownAndOut(Barrier):
-    def payoff(self, S: "Statematrix", adjoint_mode = False, adjoints: "defaultdict with adjoints" = None) -> "Vector with payoff":
-        """
-        Calculates payoff given a matrix with underlying prices
-        """
-        
+    def payoff(self, S, adjoint_mode=False, adjoints=None):
         P = np.maximum(S[:, -1] - self.K, 0) #'Intrinsic value'
         P *= 1/(1 + np.exp(-self.k * (np.min(S - self.B, axis = 1)))) #Zero payoff if barrier was hit
 
@@ -44,11 +37,7 @@ class BarrierDiscreteDownAndOut(Barrier):
 
 
 class BarrierDiscreteUpAndIn(Barrier):
-    def payoff(self, S: "Statematrix", adjoint_mode = False, adjoints: "defaultdict with adjoints" = None) -> "Vector with payoff":
-        """
-        Calculates payoff given a matrix with underlying prices
-        """
-        
+    def payoff(self, S, adjoint_mode=False, adjoints=None):
         P = np.maximum(S[:, -1] - self.K, 0) #'Intrinsic value'
         P *= 1/(1 + np.exp(-self.k * (np.max(S, axis = 1) - self.B))) #Zero payoff if barrier was hit
 
@@ -67,7 +56,7 @@ class BarrierDiscreteUpAndIn(Barrier):
 
 
 class BarrierDownAndOut(Barrier):
-    def payoff(self, S: "Statematrix", adjoint_mode = False, adjoints: "defaultdict with adjoints" = None) -> "Vector with payoff":
+    def payoff(self, S, adjoint_mode=False, adjoints=None):
         """
         Calculates payoff given a matrix with underlying prices.
         Uses the Brownian Bridge approach to approximate the price of a continuous barrier option.
@@ -136,7 +125,7 @@ class BlackCoxDebt:
         return P
 
 
-class BarrierSimple():
+class BarrierSimple:
     """
     Base-class for simple barrier options
     """
@@ -157,7 +146,7 @@ class BarrierSimple():
 
 
 class BarrierSimpleUpAndIn(BarrierSimple):
-    def payoff(self, S: "Statematrix", adjoint_mode = False, adjoints: "defaultdict with adjoints" = None) -> "Vector with payoff":
+    def payoff(self, S, adjoint_mode=False, adjoints=None):
         """
         Calculates payoff given a matrix with underlying prices
         """
@@ -181,7 +170,7 @@ class BarrierSimpleUpAndIn(BarrierSimple):
 
 
 class BarrierSimpleUpAndOut(BarrierSimple):
-    def payoff(self, S: "Statematrix", adjoint_mode = False, adjoints: "defaultdict with adjoints" = None) -> "Vector with payoff":
+    def payoff(self, S, adjoint_mode=False, adjoints=None):
         """
         Calculates payoff given a matrix with underlying prices
         """
@@ -208,7 +197,7 @@ class Euro():
     """
     Base-class for european options.
     """
-    def __init__(self, K: "Strike", T: "Expiration", underlying):
+    def __init__(self, K, T, underlying):
         self.K = K
         self.T = T
         self.timeline = np.array([T])
@@ -222,7 +211,7 @@ class Euro():
 
 
 class EuroCall(Euro):
-    def payoff(self, S: "Statematrix", adjoint_mode = False, adjoints: "defaultdict with adjoints" = None) -> "Vector with payoff":
+    def payoff(self, S, adjoint_mode=False, adjoints=None):
         """
         Calculates payoff given a matrix with underlying prices
         """
@@ -242,7 +231,7 @@ class EuroCall(Euro):
 
 
 class EuroPut(Euro):
-    def payoff(self, S: "Statematrix", adjoint_mode = False, adjoints: "defaultdict with adjoints" = None) -> "Vector with payoff":
+    def payoff(self, S, adjoint_mode=False, adjoints=None):
         """
         Calculates payoff given a matrix with underlying prices
         """
