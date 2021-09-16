@@ -1,5 +1,6 @@
 import numpy as np
 
+
 def calc_optionprice(n, option):
     """
     Approximates optionprices for the option specified in the option argument using MC-simulations.
@@ -26,4 +27,4 @@ def calc_optionprice(n, option):
     # Calculate the MC-estimate
     V = np.sum(V)/n
 
-    return (V, S)
+    return V, S
