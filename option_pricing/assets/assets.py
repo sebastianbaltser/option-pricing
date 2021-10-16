@@ -47,11 +47,11 @@ class JumpDiffusion:
 
 
 class BrownianMotion:
-    def __init__(self, initial_price, riskfree_rate, volatility, dividend_yield=0):
-        self.S0 = initial_price
-        self.mu = riskfree_rate
-        self.sigma = volatility
-        self.a = dividend_yield
+    def __init__(self, initial_price, drift, volatility, dividend_yield=0):
+        self.initial_price = initial_price
+        self.drift = drift
+        self.volatility = volatility
+        self.dividend_yield = dividend_yield
 
     def simulate_states(self, timeline, n):
         timeline = np.concatenate(([0], timeline))
@@ -62,9 +62,9 @@ class BrownianMotion:
         Z = np.concatenate([Z, -Z], axis=0)
 
         # Calculate state matrix
-        d1 = self.mu - self.a - (self.sigma**2) / 2
-        d2 = d1*dt + self.sigma*np.sqrt(dt)*Z
-        S = np.hstack([np.full((n, 1), self.S0), np.exp(d2)]).cumprod(axis = 1)
+        d1 = self.drift - self.dividend_yield - (self.volatility ** 2) / 2
+        d2 = d1 * dt + self.volatility * np.sqrt(dt) * Z
+        S = np.hstack([np.full((n, 1), self.initial_price), np.exp(d2)]).cumprod(axis = 1)
 
         return S
 
