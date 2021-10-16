@@ -21,11 +21,12 @@ class Barrier:
 
 class BarrierDiscreteDownAndOut(Barrier):
     def payoff(self, S, adjoint_mode=False, adjoints=None):
-        P = np.maximum(S[:, -1] - self.K, 0) #'Intrinsic value'
-        P *= 1/(1 + np.exp(-self.k * (np.min(S - self.B, axis = 1)))) #Zero payoff if barrier was hit
+        intrinsic_value = np.maximum(S[:, -1] - self.K, 0)
+        barrier_discounting = 1/(1 + np.exp(-self.k * (np.min(S - self.B, axis=1))))
+        payoff = intrinsic_value * barrier_discounting
 
         if not adjoint_mode:
-            return P
+            return payoff
 
         logistic_PDF = scipy.stats.logistic.pdf(np.min(S, axis = 1), loc = self.B, scale = 1/self.k)
 
@@ -38,11 +39,12 @@ class BarrierDiscreteDownAndOut(Barrier):
 
 class BarrierDiscreteUpAndIn(Barrier):
     def payoff(self, S, adjoint_mode=False, adjoints=None):
-        P = np.maximum(S[:, -1] - self.K, 0) #'Intrinsic value'
-        P *= 1/(1 + np.exp(-self.k * (np.max(S, axis = 1) - self.B))) #Zero payoff if barrier was hit
+        intrinsic_value = np.maximum(S[:, -1] - self.K, 0)
+        barrier_discounting = 1/(1 + np.exp(-self.k * (np.max(S, axis=1) - self.B)))
+        payoff = intrinsic_value * barrier_discounting
 
         if not adjoint_mode:
-            return P
+            return payoff
 
         logistic_PDF = scipy.stats.logistic.pdf(np.max(S, axis = 1), loc = self.B, scale = 1/self.k)
 
