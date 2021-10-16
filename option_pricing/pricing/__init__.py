@@ -1,3 +1,3 @@
 from .pricing import (
-    calc_optionprice
+    calculate_option_price
 )

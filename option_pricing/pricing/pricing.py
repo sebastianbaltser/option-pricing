@@ -1,7 +1,7 @@
 import numpy as np
 
 
-def calc_optionprice(n, option):
+def calculate_option_price(n, option):
     """
     Approximate the price for the option specified in the option argument using Monte Carlo simulations.
 
