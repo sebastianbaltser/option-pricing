@@ -14,12 +14,9 @@ class JumpDiffusion:
 
     def simulate_states(self, timeline, n):
         timeline = np.concatenate(([0], timeline))
-        # Timedifference in the timeline is called dt
         dt = np.diff(timeline)
 
-        # Generate random numbers
         Z = np.random.normal(0, 1, size = (int(n/2), len(timeline)-1))
-        # Apply the antithetic variates method
         Z = np.concatenate([Z, -Z], axis=0)
 
         # Simulate the number of jumps arriving in each timeline-interval for each path
@@ -58,10 +55,8 @@ class BrownianMotion:
 
     def simulate_states(self, timeline, n):
         timeline = np.concatenate(([0], timeline))
-        # Timedifference in the timeline is called dt
         dt = np.diff(timeline)
 
-        # Generate random numbers
         Z = np.random.normal(0, 1, size = (int(n/2), len(timeline)-1))
         # Apply the antithetic variates method
         Z = np.concatenate([Z, -Z], axis=0)
