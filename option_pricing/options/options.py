@@ -61,7 +61,7 @@ class BarrierDownAndOut(Barrier):
         Calculates payoff given a matrix with underlying prices.
         Uses the Brownian Bridge approach to approximate the price of a continuous barrier option.
         """
-        sigma = self.underlying.sigma
+        sigma = self.underlying.volatility
         dt = np.diff(self.timeline, prepend = 0)
         
         #To avoid recalculation st and stp is defined:
@@ -116,7 +116,7 @@ class BlackCoxDebt:
         Bb = np.take_along_axis(S, tau_idx[:, None], axis=1).flatten()
         # Instead of tau being indexes take indices from the timeline to transform tau to timestamps
         tau = self.timeline.take(tau_idx-1)
-        Bb *= np.exp(self.underlying.mu * (self.timeline[-1] - tau))
+        Bb *= np.exp(self.underlying.drift * (self.timeline[-1] - tau))
 
         # If the barrier was not breached the payoff is determined at maturity
         # otherwise the payoff is determined at time-tau

@@ -14,7 +14,7 @@ def calculate_option_price(n, option):
             A tuple with the approximated option price and an array of simulated states of the underlying
     """
     expiration = option.timeline[-1]
-    mu = option.underlying.mu
+    mu = option.underlying.drift
 
     underlying_states = option.underlying.simulate_states(option.timeline, n)
 
