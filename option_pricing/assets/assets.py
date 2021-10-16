@@ -3,7 +3,13 @@
 import numpy as np
 
 
-class JumpDiffusion:
+class Asset:
+    def __repr__(self):
+        varstring = ', '.join(f"{k} = {v}" for k, v in self.__dict__.items())
+        return f"{self.__class__.__name__}({varstring})"
+
+
+class JumpDiffusion(Asset):
     def __init__(self, initial_price, drift, volatility, jump_intensity, jump_size_mean, jump_size_variance):
         self.initial_price = initial_price
         self.drift = drift
@@ -41,12 +47,8 @@ class JumpDiffusion:
 
         return S
 
-    def __repr__(self):
-        varstring = ', '.join(f"{k} = {v}" for k, v in self.__dict__.items())
-        return f"{self.__class__.__name__}({varstring})"
 
-
-class BrownianMotion:
+class BrownianMotion(Asset):
     def __init__(self, initial_price, drift, volatility, dividend_yield=0):
         self.initial_price = initial_price
         self.drift = drift
@@ -67,7 +69,3 @@ class BrownianMotion:
         S = np.hstack([np.full((n, 1), self.initial_price), np.exp(d2)]).cumprod(axis = 1)
 
         return S
-
-    def __repr__(self):
-        varstring = ', '.join(f"{k} = {v}" for k, v in self.__dict__.items())
-        return f"{self.__class__.__name__}({varstring})"
