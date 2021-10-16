@@ -13,18 +13,18 @@ def calc_optionprice(n, option):
         (tuple[float, numpy.array]):
             A tuple with calculated option price and statematrix
     """
-    T = option.timeline[-1]
+    expiration = option.timeline[-1]
     mu = option.underlying.mu
 
-    S = option.underlying.simulate_states(option.timeline, n)
+    underlying_states = option.underlying.simulate_states(option.timeline, n)
 
     # Calculate payoff with the payoff-method of the corresponding option
-    P = option.payoff(S)
+    payoffs = option.payoff(underlying_states)
 
     # Apply time-zero discounting
-    V = np.exp(-mu*T) * P
+    present_value = np.exp(-mu*expiration) * payoffs
 
     # Calculate the MC-estimate
-    V = np.sum(V)/n
+    present_value = np.sum(present_value)/n
 
-    return V, S
+    return present_value, underlying_states
