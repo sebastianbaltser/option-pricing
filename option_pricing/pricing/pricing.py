@@ -3,15 +3,15 @@ import numpy as np
 
 def calc_optionprice(n, option):
     """
-    Approximates optionprices for the option specified in the option argument using MC-simulations.
+    Approximate the price for the option specified in the option argument using Monte Carlo simulations.
 
     Args:
-        n (int): number of simulations in MC-simulations
-        option: instance of an option-class
+        n (int): The number of simulations used.
+        option: Instance of an option-class
 
     Returns:
-        (tuple[float, numpy.array]):
-            A tuple with calculated option price and statematrix
+        (tuple[float, numpy.ndarray]):
+            A tuple with the approximated option price and an array of simulated states of the underlying
     """
     expiration = option.timeline[-1]
     mu = option.underlying.mu
