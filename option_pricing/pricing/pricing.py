@@ -18,13 +18,11 @@ def calculate_option_price(n, option):
 
     underlying_states = option.underlying.simulate_states(option.timeline, n)
 
-    # Calculate payoff with the payoff-method of the corresponding option
     payoffs = option.payoff(underlying_states)
 
-    # Apply time-zero discounting
-    present_value = np.exp(-mu*expiration) * payoffs
+    time_zero_discount = np.exp(-mu*expiration)
+    present_value = time_zero_discount * payoffs
 
-    # Calculate the MC-estimate
     present_value = np.sum(present_value)/n
 
     return present_value, underlying_states
