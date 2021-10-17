@@ -13,16 +13,10 @@ def calculate_option_price(n, option):
         (tuple[float, numpy.ndarray]):
             A tuple with the approximated option price and an array of simulated states of the underlying
     """
-    expiration = option.timeline[-1]
-    mu = option.underlying.drift
+    underlying_states = option.simulate_underlying_states(n)
 
-    underlying_states = option.underlying.simulate_states(option.timeline, n)
+    present_values = option.value(underlying_states)
 
-    payoffs = option.payoff(underlying_states)
-
-    time_zero_discount = np.exp(-mu*expiration)
-    present_value = time_zero_discount * payoffs
-
-    present_value = np.sum(present_value)/n
+    present_value = np.sum(present_values)/n
 
     return present_value, underlying_states
