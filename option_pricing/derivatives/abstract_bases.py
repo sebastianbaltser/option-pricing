@@ -1,6 +1,13 @@
 import abc
+from typing import NamedTuple
+import numpy as np
 
 from option_pricing.assets.assets import Asset
+
+
+class Payoffs(NamedTuple):
+    payoffs: np.ndarray
+    timeline: tuple[float]
 
 
 class Derivative(abc.ABC):
@@ -38,4 +45,12 @@ class Option(Derivative):
 
     @abc.abstractmethod
     def payoff(self, states):
-        """Calculate the option payoff from underlying states."""
+        """
+        Calculate the option payoff from underlying states.
+
+        Args:
+            states (SimulatedStates):
+
+        Returns:
+            (Payoffs):
+        """

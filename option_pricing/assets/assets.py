@@ -2,6 +2,12 @@
 """
 import abc
 import numpy as np
+from typing import NamedTuple
+
+
+class SimulatedStates(NamedTuple):
+    states: np.ndarray
+    timeline: tuple[float]
 
 
 class Asset(abc.ABC):
@@ -50,7 +56,7 @@ class JumpDiffusion(Asset):
         S = np.hstack([S0, Sn])
         S = S.cumprod(axis = 1)
 
-        return S
+        return SimulatedStates(S, tuple(timeline))
 
 
 class BrownianMotion(Asset):
@@ -73,4 +79,4 @@ class BrownianMotion(Asset):
         d2 = d1 * dt + self.volatility * np.sqrt(dt) * Z
         S = np.hstack([np.full((n, 1), self.initial_price), np.exp(d2)]).cumprod(axis = 1)
 
-        return S
+        return SimulatedStates(S, tuple(timeline))
