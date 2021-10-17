@@ -2,7 +2,7 @@ import abc
 from typing import NamedTuple
 import numpy as np
 
-from option_pricing.assets.assets import Asset
+from option_pricing.assets.assets import Asset, SimulatedStates
 
 
 class Payoffs(NamedTuple):
@@ -23,7 +23,15 @@ class Derivative(abc.ABC):
 
     @abc.abstractmethod
     def value(self, states):
-        """Calculates the time zero value of the derivative given the states"""
+        """
+        Calculate the time zero value of the derivative given the states
+
+        Args:
+            states (SimulatedStates):
+
+        Returns:
+            (numpy.ndarray):
+        """
 
 
 class Option(Derivative):
