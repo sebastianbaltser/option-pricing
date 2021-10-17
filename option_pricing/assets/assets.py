@@ -1,12 +1,17 @@
 """Classes representing underlying assets
 """
+import abc
 import numpy as np
 
 
-class Asset:
+class Asset(abc.ABC):
     def __repr__(self):
         varstring = ', '.join(f"{k} = {v}" for k, v in self.__dict__.items())
         return f"{self.__class__.__name__}({varstring})"
+
+    @abc.abstractmethod
+    def simulate_states(self, timeline, n):
+        """Simulate n states for the specified timeline"""
 
 
 class JumpDiffusion(Asset):
