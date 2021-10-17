@@ -1,5 +1,5 @@
 from option_pricing import (
     assets,
-    options,
+    derivatives,
     pricing
 )
