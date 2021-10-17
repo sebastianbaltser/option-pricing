@@ -1,4 +1,4 @@
-from .options import (
+from .derivatives import (
     BarrierDiscreteDownAndOut,
     BarrierSimple,
     BarrierDownAndOut,
