@@ -21,18 +21,6 @@ class Derivative(abc.ABC):
     def __init__(self, underlying):
         self.underlying = underlying
 
-    @abc.abstractmethod
-    def value(self, states):
-        """
-        Calculate the time zero value of the derivative given the states
-
-        Args:
-            states (SimulatedStates):
-
-        Returns:
-            (numpy.ndarray):
-        """
-
 
 class Option(Derivative):
     """
@@ -50,6 +38,23 @@ class Option(Derivative):
         super().__init__(underlying)
         self.strike = strike
         self.expiration = expiration
+
+    def value(self, states):
+        """
+        Calculate the time zero value of the derivative given the states
+
+        Args:
+            states (SimulatedStates):
+
+        Returns:
+            (numpy.ndarray):
+        """
+        payoffs = self.payoff(states)
+
+        time_zero_discount = np.exp(-self.underlying.drift * np.array(payoffs.timeline))
+        present_value = np.sum(time_zero_discount * payoffs.payoffs, axis=1)
+
+        return present_value
 
     @abc.abstractmethod
     def payoff(self, states):

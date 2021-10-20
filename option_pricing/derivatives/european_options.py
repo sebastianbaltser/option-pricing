@@ -6,14 +6,6 @@ from .abstract_bases import Option, Payoffs
 
 
 class EuropeanOption(Option, ABC):
-    def value(self, states):
-        payoffs = self.payoff(states)
-
-        time_zero_discount = np.exp(-self.underlying.drift * np.array(payoffs.timeline))
-        present_value = np.sum(time_zero_discount * payoffs.payoffs, axis=1)
-
-        return present_value
-
     def simulate_underlying_states(self, n):
         return self.underlying.simulate_states(np.array([self.expiration]), n)
 
