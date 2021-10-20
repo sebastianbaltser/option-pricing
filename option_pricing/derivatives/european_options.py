@@ -2,15 +2,15 @@ from abc import ABC
 
 import numpy as np
 
-from .abstract_bases import Option
+from .abstract_bases import Option, Payoffs
 
 
 class EuropeanOption(Option, ABC):
     def value(self, states):
         payoffs = self.payoff(states)
 
-        time_zero_discount = np.exp(-self.underlying.drift * self.expiration)
-        present_value = time_zero_discount * payoffs
+        time_zero_discount = np.exp(-self.underlying.drift * np.array(payoffs.timeline))
+        present_value = np.sum(time_zero_discount * payoffs.payoffs, axis=1)
 
         return present_value
 
@@ -20,13 +20,13 @@ class EuropeanOption(Option, ABC):
 
 class EuroCall(EuropeanOption):
     def payoff(self, states):
-        payoffs = np.maximum(states[:, -1] - self.strike, 0)
+        payoffs = np.maximum(states.states[:, [states.timeline.index(self.expiration)]] - self.strike, 0)
 
-        return payoffs
+        return Payoffs(payoffs, (self.expiration, ))
 
 
 class EuroPut(EuropeanOption):
     def payoff(self, states):
-        payoffs = np.maximum(self.strike - states[:, -1], 0)
+        payoffs = np.maximum(self.strike - states.states[:, [states.timeline.index(self.expiration)]], 0)
 
-        return payoffs
+        return Payoffs(payoffs, (self.expiration, ))
