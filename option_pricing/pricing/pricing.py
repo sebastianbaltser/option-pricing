@@ -1,13 +1,15 @@
 import numpy as np
 
 
-def calculate_option_price(n, option):
+def calculate_option_price(n, option, risk_free_rate):
     """
     Approximate the price for the option specified in the option argument using Monte Carlo simulations.
 
     Args:
         n (int): The number of simulations used.
         option: Instance of an option-class
+        risk_free_rate (float | numpy.ndarray):
+            The risk-free rate or an array of risk-free rates.
 
     Returns:
         (tuple[float, numpy.ndarray]):
@@ -15,7 +17,7 @@ def calculate_option_price(n, option):
     """
     underlying_states = option.simulate_underlying_states(n)
 
-    present_values = option.value(underlying_states)
+    present_values = option.value(underlying_states, risk_free_rate)
 
     present_value = np.sum(present_values)/n
 

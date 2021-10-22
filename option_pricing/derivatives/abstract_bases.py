@@ -39,19 +39,21 @@ class Option(Derivative):
         self.strike = strike
         self.expiration = expiration
 
-    def value(self, states):
+    def value(self, states, risk_free_rate):
         """
-        Calculate the time zero value of the derivative given the states
+        Calculate the time zero value of the derivative given the states.
 
         Args:
             states (SimulatedStates):
+            risk_free_rate (float | np.ndarray):
+                The risk-free rate or an array of risk-free rates.
 
         Returns:
             (numpy.ndarray):
         """
         payoffs = self.payoff(states)
 
-        time_zero_discount = np.exp(-self.underlying.drift * np.array(payoffs.timeline))
+        time_zero_discount = np.exp(-risk_free_rate * np.array(payoffs.timeline))
         present_value = np.sum(time_zero_discount * payoffs.payoffs, axis=1)
 
         return present_value
