@@ -1,7 +1,7 @@
 import numpy as np
 
 
-def calculate_option_price(n, option, risk_free_rate):
+def calculate_derivative_price(n, option, risk_free_rate):
     """
     Approximate the price for the option specified in the option argument using Monte Carlo simulations.
 
