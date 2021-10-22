@@ -5,3 +5,4 @@ channels:
 dependencies:
   - numpy=1.21.2=py39h7eed0ac_0
   - scipy=1.7.1=py39h056f1c0_0
+  - pytest
