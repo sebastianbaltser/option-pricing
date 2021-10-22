@@ -57,45 +57,6 @@ class BarrierDiscreteUpAndIn(Barrier):
         adjoints["K_"] += -1 * (S[:, -1] > self.K) * 1/(1 + np.exp(-self.k * (np.max(S, axis = 1) - self.B))) * adjoints["P_"]
 
 
-class BarrierDownAndOut(Barrier):
-    def payoff(self, S, adjoint_mode=False, adjoints=None):
-        """
-        Calculates payoff given a matrix with underlying prices.
-        Uses the Brownian Bridge approach to approximate the price of a continuous barrier option.
-        """
-        sigma = self.underlying.volatility
-        dt = np.diff(self.timeline, prepend = 0)
-        
-        #To avoid recalculation st and stp is defined:
-        st = np.maximum(np.log(S[:, :-1]/self.B), 0) 
-        stp = np.maximum(np.log(S[:, 1:]/self.B), 0)
-
-        p = np.exp(-2 * st * stp / (sigma**2 * dt))
-        q = np.prod(1 - p, axis = 1)
-        P = np.maximum(S[:, -1] - self.K, 0) * q
-
-        if not adjoint_mode:
-            return P
-
-        S_ = np.zeros(S.shape)
-        S_[:, -1] = (S[:, -1] > self.K) * q * adjoints["P_"]
-        adjoints["S_"] += S_
-        adjoints["K_"] += -1 * (S[:, -1] > self.K) * q * adjoints["P_"]
-        adjoints["q_"] += np.maximum(S[:, -1] - self.K, 0) * adjoints["P_"]
-
-        p_ = np.zeros(p.shape)
-        for i in range(p.shape[1]):
-            #Product of every column except column i:
-            p_[:, i] = -1 * (1 - np.hstack([p[:, :i], p[:, i+1:]])).prod(axis = 1) * adjoints["q_"]
-        adjoints["p_"] += p_
-
-        lnSBI = (np.log(S/self.B) > 0) / S #To avoid recalculation
-        adjoints["S_"][:, :-1] += -2 * stp * lnSBI[:, :-1] / (sigma**2 * dt) * p * adjoints["p_"]
-        adjoints["S_"][:, 1:] += -2 * st * lnSBI[:, 1:] / (sigma**2 * dt) * p * adjoints["p_"]
-        adjoints["sigma_"] += np.sum((4 * st * stp / (sigma**3 * dt)) * p * adjoints["p_"], axis = 1)
-        adjoints["dt_"] += 2 * st * stp / (sigma**2 * dt**2) * p * adjoints["p_"]
-
-
 class BlackCoxDebt:
     def __init__(self, strike, timeline, barrier, underlying):
         self.K = strike
