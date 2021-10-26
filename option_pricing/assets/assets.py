@@ -24,6 +24,12 @@ def simulate_wiener_process(n_periods, n_paths):
     return np.random.normal(0, 1, size=(n_paths, n_periods))
 
 
+def handle_timeline(timeline):
+    if 0 not in timeline:
+        timeline = np.concatenate(([0], timeline))
+    return timeline
+
+
 class JumpDiffusion(Asset):
     def __init__(self, initial_price, drift, volatility, jump_intensity, jump_size_mean, jump_size_variance):
         self.initial_price = initial_price
