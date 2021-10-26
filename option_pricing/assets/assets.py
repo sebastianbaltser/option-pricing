@@ -70,20 +70,21 @@ class BrownianMotion(Asset):
         self.volatility = volatility
         self.dividend_yield = dividend_yield
 
-    def simulate_states(self, timeline, n):
+    def calculate_states(self, timeline, wiener_process):
         timeline = np.concatenate(([0], timeline))
         dt = np.diff(timeline)
 
-        Z = np.random.normal(0, 1, size = (int(n/2), len(timeline)-1))
-        # Apply the antithetic variates method
-        Z = np.concatenate([Z, -Z], axis=0)
+        wiener_process = np.concatenate([wiener_process, -wiener_process], axis=0)
 
-        # Calculate state matrix
         d1 = self.drift - self.dividend_yield - (self.volatility ** 2) / 2
-        d2 = d1 * dt + self.volatility * np.sqrt(dt) * Z
-        S = np.hstack([np.full((n, 1), self.initial_price), np.exp(d2)]).cumprod(axis = 1)
+        d2 = d1 * dt + self.volatility * np.sqrt(dt) * wiener_process
+        states = np.hstack([np.full((len(wiener_process), 1), self.initial_price), np.exp(d2)]).cumprod(axis=1)
 
-        return SimulatedStates(S, tuple(timeline))
+        return SimulatedStates(states, tuple(timeline))
+
+    def simulate_states(self, timeline, n):
+        wiener_process = simulate_wiener_process(len(timeline), int(n/2))
+        return self.calculate_states(timeline, wiener_process)
 
 
 class CIRProcess(Asset):
