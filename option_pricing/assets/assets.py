@@ -77,7 +77,6 @@ class BrownianMotion(Asset):
         self.dividend_yield = dividend_yield
 
     def calculate_states(self, timeline, wiener_process):
-        timeline = np.concatenate(([0], timeline))
         dt = np.diff(timeline)
 
         wiener_process = np.concatenate([wiener_process, -wiener_process], axis=0)
@@ -89,7 +88,8 @@ class BrownianMotion(Asset):
         return SimulatedStates(states, tuple(timeline))
 
     def simulate_states(self, timeline, n):
-        wiener_process = simulate_wiener_process(len(timeline), int(n/2))
+        timeline = handle_timeline(timeline)
+        wiener_process = simulate_wiener_process(len(timeline)-1, int(n/2))
         return self.calculate_states(timeline, wiener_process)
 
 
