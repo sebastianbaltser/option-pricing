@@ -24,6 +24,12 @@ def simulate_wiener_process(n_periods, n_paths):
     return np.random.normal(0, 1, size=(n_paths, n_periods))
 
 
+def simulate_correlated_wiener_process(wiener_process, correlation):
+    n_paths, n_periods = wiener_process.shape
+    temp_wiener_process = simulate_wiener_process(n_periods, n_paths)
+    return correlation*wiener_process + np.sqrt(1 - correlation ** 2)*temp_wiener_process
+
+
 def handle_timeline(timeline):
     if 0 not in timeline:
         timeline = np.concatenate(([0], timeline))
