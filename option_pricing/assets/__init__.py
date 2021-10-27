@@ -1,5 +1,6 @@
 from .assets import (
     BrownianMotion,
     JumpDiffusion,
-    CIRProcess
+    CIRProcess,
+    HestonProcess
 )

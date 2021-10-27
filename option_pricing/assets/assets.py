@@ -127,3 +127,29 @@ class CIRProcess(Asset):
         timeline = handle_timeline(timeline)
         wiener_process = simulate_wiener_process(len(timeline)-1, int(n/2))
         return self.calculate_states(timeline, wiener_process)
+
+
+class HestonProcess(Asset):
+    def __init__(self, initial_price, drift, correlation, initial_variance_level, variance_mean,
+                 speed_of_variance_mean_reversion, vol_of_vol):
+        self.variance = CIRProcess(initial_variance_level, variance_mean, speed_of_variance_mean_reversion, vol_of_vol)
+        self.initial_price = initial_price
+        self.drift = drift
+        self.correlation = correlation
+
+    def calculate_variance_states(self, timeline, wiener_process):
+        variance = self.variance.calculate_states(timeline, wiener_process).states
+        # The first column is the initial_variance_level which is just a parameter so it can be removed.
+        return variance[:, 1:]
+
+    def calculate_price_states(self, timeline, variance, wiener_process):
+        prices = BrownianMotion(self.initial_price, self.drift, np.sqrt(variance))
+        return prices.calculate_states(timeline, wiener_process)
+
+    def simulate_states(self, timeline, n):
+        timeline = handle_timeline(timeline)
+        variance_wiener_process = simulate_wiener_process(len(timeline)-1, n)
+        variance = self.calculate_variance_states(timeline, variance_wiener_process)
+        price_wiener_process = simulate_correlated_wiener_process(variance_wiener_process, self.correlation)
+
+        return self.calculate_price_states(timeline, variance, price_wiener_process)
