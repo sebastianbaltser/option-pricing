@@ -110,8 +110,8 @@ class CIRProcess(Asset):
 
         levels = [np.repeat(self.initial_level, len(wiener_process))]
         for t in range(1, len(timeline)):
-            previous_state = np.maximum(levels[t-1], 0)
-            levels.append(previous_state + d1[t-1]*(self.mean-previous_state) + d2[:, t-1]*np.sqrt(previous_state))
+            current_level = levels[t-1] + d1[t-1]*(self.mean-levels[t-1]) + d2[:, t-1]*np.sqrt(levels[t-1])
+            levels.append(np.maximum(current_level, -current_level))
 
         levels = np.stack(levels, axis=1)
 
