@@ -2,7 +2,7 @@
 """
 import abc
 import numpy as np
-from typing import NamedTuple
+from typing import NamedTuple, Literal
 
 
 class SimulatedStates(NamedTuple):
@@ -100,7 +100,25 @@ class BrownianMotion(Asset):
 
 
 class CIRProcess(Asset):
-    def __init__(self, initial_level, mean, speed_of_mean_reversion, volatility, negative_variance_method="reflecting"):
+    r"""
+    The Cox-Ingersoll-Ross one factor model.
+
+    Args:
+        initial_level (float):
+            The starting point of the process.
+        mean (float):
+            The mean which the process will revert to, often denoted $b$ or $\theta$.
+        speed_of_mean_reversion (float):
+            The speed of adjustment to the mean, often denoted $a$ or $\kappa$.
+        volatility (float):
+            The volatility of the process, often denoted $\sigma$.
+        negative_variance_method:
+            The method by which negative levels of the process are handled. Negative levels can occur due to the
+            discretization of the process. If "reflecting" then if r<0 then r is set to -r. If absorbing then
+            if r<0 then r is set to 0.
+    """
+    def __init__(self, initial_level, mean, speed_of_mean_reversion, volatility,
+                 negative_variance_method: Literal['reflecting', 'absorbing'] = "reflecting"):
         self.initial_level = initial_level
         self.mean = mean
         self.speed_of_mean_reversion = speed_of_mean_reversion
