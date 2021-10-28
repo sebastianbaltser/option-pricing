@@ -154,7 +154,6 @@ class CIRProcess(Asset):
             return np.maximum(states, 0)
 
 
-
 class HestonProcess(Asset):
     def __init__(self, initial_price, drift, correlation, initial_variance_level, variance_mean,
                  speed_of_variance_mean_reversion, vol_of_vol):
