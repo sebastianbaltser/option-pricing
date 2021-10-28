@@ -112,18 +112,18 @@ class CIRProcess(Asset):
             The speed of adjustment to the mean, often denoted $a$ or $\kappa$.
         volatility (float):
             The volatility of the process, often denoted $\sigma$.
-        negative_variance_method:
+        negative_level_method:
             The method by which negative levels of the process are handled. Negative levels can occur due to the
             discretization of the process. If "reflecting" then if r<0 then r is set to -r. If absorbing then
             if r<0 then r is set to 0.
     """
     def __init__(self, initial_level, mean, speed_of_mean_reversion, volatility,
-                 negative_variance_method: Literal['reflecting', 'absorbing'] = "reflecting"):
+                 negative_level_method: Literal['reflecting', 'absorbing'] = "reflecting"):
         self.initial_level = initial_level
         self.mean = mean
         self.speed_of_mean_reversion = speed_of_mean_reversion
         self.volatility = volatility
-        self.negative_variance_method = negative_variance_method
+        self.negative_level_method = negative_level_method
 
     def calculate_states(self, timeline, wiener_process):
         dt = np.diff(timeline)
@@ -148,9 +148,9 @@ class CIRProcess(Asset):
         return self.calculate_states(timeline, wiener_process)
 
     def handle_negative_states(self, states):
-        if self.negative_variance_method == "reflecting":
+        if self.negative_level_method == "reflecting":
             return np.abs(states)
-        elif self.negative_variance_method == "absorbing":
+        elif self.negative_level_method == "absorbing":
             return np.maximum(states, 0)
 
 
