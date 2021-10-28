@@ -100,11 +100,12 @@ class BrownianMotion(Asset):
 
 
 class CIRProcess(Asset):
-    def __init__(self, initial_level, mean, speed_of_mean_reversion, volatility):
+    def __init__(self, initial_level, mean, speed_of_mean_reversion, volatility, negative_variance_method="reflecting"):
         self.initial_level = initial_level
         self.mean = mean
         self.speed_of_mean_reversion = speed_of_mean_reversion
         self.volatility = volatility
+        self.negative_variance_method = negative_variance_method
 
     def calculate_states(self, timeline, wiener_process):
         dt = np.diff(timeline)
@@ -117,7 +118,7 @@ class CIRProcess(Asset):
         levels = [np.repeat(self.initial_level, len(wiener_process))]
         for t in range(1, len(timeline)):
             current_level = levels[t-1] + d1[t-1]*(self.mean-levels[t-1]) + d2[:, t-1]*np.sqrt(levels[t-1])
-            levels.append(np.maximum(current_level, -current_level))
+            levels.append(self.handle_negative_states(current_level))
 
         levels = np.stack(levels, axis=1)
 
@@ -127,6 +128,13 @@ class CIRProcess(Asset):
         timeline = handle_timeline(timeline)
         wiener_process = simulate_wiener_process(len(timeline)-1, int(n/2))
         return self.calculate_states(timeline, wiener_process)
+
+    def handle_negative_states(self, states):
+        if self.negative_variance_method == "reflecting":
+            return np.abs(states)
+        elif self.negative_variance_method == "absorbing":
+            return np.maximum(states, 0)
+
 
 
 class HestonProcess(Asset):
